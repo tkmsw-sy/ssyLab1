@@ -330,30 +330,27 @@ int midpointTowardFirst(int x, int y) {
  *   Rating: 7
  */
 int isBetweenEitherOrder(int x, int a, int b) {
+
   int signX = x >> 31;
-  int signA = a >> 31;
-  int signB = b >> 31;
+  
+  // 判断 x >= a 和 x <= a
+  int signXorA = (x ^ a) >> 31;
   int xa = x + (~a + 1);
   int signXA = xa >> 31;
-  int xGeA = ((signX ^ signA) & ~signX) | (~(signX ^ signA) & ~signXA);
-  int ax = a + (~x + 1);
-  int signAX = ax >> 31;
-int xLeA = ((signX ^ signA) & signX) | (~(signX ^ signA) & ~signAX);
-     int xb = x + (~b + 1);
-     int signXB = xb >> 31;
-int xGeB = ((signX ^ signB) & ~signX) | (~(signX ^ signB) & ~signXB);
-int bx = b + (~x + 1);
-  int signBX = bx >> 31;
-int xLeB = ((signX ^ signB) & signX) | (~(signX ^ signB) & ~signBX);
-int xEqA = !(x ^ a);
-int xEqB = !(x ^ b);
+  int xGeA = (signXorA & ~signX) | (~signXorA & ~signXA);
+  int xLeA = (signXorA & signX) | (~signXorA & (signXA | !xa));
 
- xGeA = xGeA | xEqA;
- xLeA = xLeA | xEqA;
-  xGeB = xGeB | xEqB;
-  xLeB = xLeB | xEqB;
- return !!((xGeA & xLeB) | (xGeB & xLeA));
+  // 判断 x >= b 和 x <= b
+  int signXorB = (x ^ b) >> 31;
+  int xb = x + (~b + 1);
+  int signXB = xb >> 31;
+  int xGeB = (signXorB & ~signX) | (~signXorB & ~signXB);
+  int xLeB = (signXorB & signX) | (~signXorB & (signXB | !xb));
+
+  // 满足 (x在a和b之间) 或 (x在b和a之间)
+  return !!((xGeA & xLeB) | (xGeB & xLeA));
 }
+
 
 // P13
 /* 
@@ -610,6 +607,6 @@ int bitReverse(int x)
   int mask4 = 0xFF | (0xFF << 16); 
   x = ((x & mask4) << 8) | ((x >> 8) & mask4);
 
-  x = (x << 16) | ((x >> 16) & 0xFFFF);
+   x = (x << 16) | ((x >> 16) & (0xFF | (0xFF << 8)));
   return x;
 }
