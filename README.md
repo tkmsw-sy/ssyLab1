@@ -62,17 +62,18 @@ chmod +x check_ops.py dlc
 
 ## 主要文件
 
-| 文件 | 用途 |
-|---|---|
-| `README.md` | 实验说明，包含每道题的完整规则 |
-| `bits.c` | 唯一需要填写的代码文件；文件开头包含完整编码规则 |
-| `bits.h` | 函数声明，不能修改 |
-| `check_ops.py` | 当前题目的规则与操作数检查入口 |
-| `dlc` | `check_ops.py` 内部调用的 DataLab 规则检查器 |
-| `decl.c`、`tests.c`、`btest.c` | 题目参数范围、参考行为与正确性测试 |
-| `Makefile` | 构建 `btest`、`ishow` 和 `fshow` |
-| `test.sh` | 一次执行构建、规则检查和完整测试 |
-| `ishow`、`fshow` | 编译后生成的整数和浮点位表示辅助工具 |
+
+| 文件                           | 用途                                             |
+| -------------------------------- | -------------------------------------------------- |
+| `README.md`                    | 实验说明，包含每道题的完整规则                   |
+| `bits.c`                       | 唯一需要填写的代码文件；文件开头包含完整编码规则 |
+| `bits.h`                       | 函数声明，不能修改                               |
+| `check_ops.py`                 | 当前题目的规则与操作数检查入口                   |
+| `dlc`                          | `check_ops.py` 内部调用的 DataLab 规则检查器     |
+| `decl.c`、`tests.c`、`btest.c` | 题目参数范围、参考行为与正确性测试               |
+| `Makefile`                     | 构建`btest`、`ishow` 和 `fshow`                  |
+| `test.sh`                      | 一次执行构建、规则检查和完整测试                 |
+| `ishow`、`fshow`               | 编译后生成的整数和浮点位表示辅助工具             |
 
 开始前建议依次阅读：
 
@@ -139,27 +140,28 @@ P2 `bitXor` 只能使用 `~` 和 `&`，不能使用其他通常允许的整数�
 
 整数题表中的“通用整数运算”指 `! ~ & ^ | + << >>`。
 
-| 编号 | 函数 | 输入约束 | 合法运算符/语法 | 最大操作数 | 分值 |
-|---:|---|---|---|---:|---:|
-| P1 | `signMask()` | 无参数 | 通用整数运算 | 2 | 1 |
-| P2 | `bitXor(x,y)` | 任意 `int` | 仅 `~ &` | 8 | 2 |
-| P3 | `negativePart(x)` | 任意 `int` | 通用整数运算 | 6 | 3 |
-| P4 | `copyByteWithin(x,src,dst)` | `src,dst` 为 0–3 | 通用整数运算 | 12 | 4 |
-| P5 | `logicalShift(x,n)` | `0<=n<=31` | 通用整数运算 | 20 | 4 |
-| P6 | `swapNibblePairs(x)` | 任意 `int` | 通用整数运算 | 18 | 4 |
-| P7 | `secondLowestZeroBit(x)` | 任意 `int` | 通用整数运算 | 8 | 4 |
-| P8 | `oddParity(x)` | 任意 `int` | 通用整数运算 | 56 | 5 |
-| P9 | `rotateRightBits(x,n)` | `0<=n<=INT_MAX`，实际位数按 32 取模 | 通用整数运算 | 16 | 5 |
-| P10 | `roundEvenPow2(x,n)` | `0<=x<=0x3fffffff`，`1<=n<=16` | 通用整数运算 | 24 | 5 |
-| P11 | `midpointTowardFirst(x,y)` | 任意 `int` | 通用整数运算 | 32 | 5 |
-| P12 | `isBetweenEitherOrder(x,a,b)` | 任意 `int` | 通用整数运算 | 48 | 7 |
-| P13 | `mul5Sat(x)` | 任意 `int` | 通用整数运算 | 30 | 7 |
-| P14 | `classifyAdd3(x,y,z)` | 任意 `int` | 通用整数运算 | 52 | 7 |
-| P15 | `floatScaleThreeHalves(uf)` | 任意单精度位模式 | 浮点题整数规则与控制流 | 60 | 7 |
-| P16 | `floatRoundEven(uf)` | 任意单精度位模式 | 浮点题整数规则与控制流 | 65 | 10 |
-| P17 | `float_i2f(x)` | 任意 `int` | 浮点题整数规则与控制流 | 40 | 10 |
-| P18 | `bitCount(x)` | 任意 `int` | 通用整数运算 | 40 | 10 |
-| P19 | `bitReverse(x)` | 任意 `int` | 通用整数运算 | 34 | 10 |
+
+| 编号 | 函数                          | 输入约束                            | 合法运算符/语法        | 最大操作数 | 分值 |
+| -----: | ------------------------------- | ------------------------------------- | ------------------------ | -----------: | -----: |
+|   P1 | `signMask()`                  | 无参数                              | 通用整数运算           |          2 |    1 |
+|   P2 | `bitXor(x,y)`                 | 任意`int`                           | 仅`~ &`                |          8 |    2 |
+|   P3 | `negativePart(x)`             | 任意`int`                           | 通用整数运算           |          6 |    3 |
+|   P4 | `copyByteWithin(x,src,dst)`   | `src,dst` 为 0–3                   | 通用整数运算           |         12 |    4 |
+|   P5 | `logicalShift(x,n)`           | `0<=n<=31`                          | 通用整数运算           |         20 |    4 |
+|   P6 | `swapNibblePairs(x)`          | 任意`int`                           | 通用整数运算           |         18 |    4 |
+|   P7 | `secondLowestZeroBit(x)`      | 任意`int`                           | 通用整数运算           |          8 |    4 |
+|   P8 | `oddParity(x)`                | 任意`int`                           | 通用整数运算           |         56 |    5 |
+|   P9 | `rotateRightBits(x,n)`        | `0<=n<=INT_MAX`，实际位数按 32 取模 | 通用整数运算           |         16 |    5 |
+|  P10 | `roundEvenPow2(x,n)`          | `0<=x<=0x3fffffff`，`1<=n<=16`      | 通用整数运算           |         24 |    5 |
+|  P11 | `midpointTowardFirst(x,y)`    | 任意`int`                           | 通用整数运算           |         32 |    5 |
+|  P12 | `isBetweenEitherOrder(x,a,b)` | 任意`int`                           | 通用整数运算           |         48 |    7 |
+|  P13 | `mul5Sat(x)`                  | 任意`int`                           | 通用整数运算           |         30 |    7 |
+|  P14 | `classifyAdd3(x,y,z)`         | 任意`int`                           | 通用整数运算           |         52 |    7 |
+|  P15 | `floatScaleThreeHalves(uf)`   | 任意单精度位模式                    | 浮点题整数规则与控制流 |         60 |    7 |
+|  P16 | `floatRoundEven(uf)`          | 任意单精度位模式                    | 浮点题整数规则与控制流 |         65 |   10 |
+|  P17 | `float_i2f(x)`                | 任意`int`                           | 浮点题整数规则与控制流 |         40 |   10 |
+|  P18 | `bitCount(x)`                 | 任意`int`                           | 通用整数运算           |         40 |   10 |
+|  P19 | `bitReverse(x)`               | 任意`int`                           | 通用整数运算           |         34 |   10 |
 
 具体输出语义、特殊值行为和示例请阅读 `bits.c` 中对应函数的注释。
 
