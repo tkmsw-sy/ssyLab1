@@ -570,7 +570,7 @@ return sign | (exp << 23) | frac;
  *   Rating: 10
  */
 int bitCount(int x) {
-int m1 = 0x55 | (0x55 << 8);
+  int m1 = 0x55 | (0x55 << 8);
   m1 = m1 | (m1 << 16);
   int m2 = 0x33 | (0x33 << 8);
   m2 = m2 | (m2 << 16);
