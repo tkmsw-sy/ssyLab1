@@ -364,19 +364,18 @@ int xEqB = !(x ^ b);
  *   Rating: 7
  */
 int mul5Sat(int x) {
-  int x4 = x << 2;
-  int result = x4 + x;
-  int signX = x >> 31;
-  int bit29= (x >> 29) & 1;
-  int bit30 = (x >> 30) & 1;
-  int shiftOvf = (signX ^ bit29) | (signX ^ bit30);
-  int signX4 = x4 >> 31;
-  int signResult = result >> 31;
-  int addOvf = ~(signX4 ^ signX) & (signX4 ^
-          +signResult);
-  int overflow = shiftOvf | addOvf;
-  int sat = (signX & (1 << 31)) | (~signX & ((1 << 31) + ~0));
-  return (overflow & sat) | (~overflow & result);
+int a = x << 2;
+  int res = a + x;
+  int sx = x >> 31;
+  int left_overflow = !!(((a >> 2) ^ x));
+  int add_overflow = !((a ^ x) >> 31) & ((res ^ x) >> 31);
+  int overflow = left_overflow | add_overflow;
+  int INT_MAX = (1 << 31) + ~0;
+  int INT_MIN = 1 << 31;
+  int sat_val = (sx & INT_MIN) | (~sx & INT_MAX);
+  int mask_ov = overflow << 31 >> 31;
+  return (mask_ov & sat_val) | (~mask_ov & res);
+
 }
 
 // P14
@@ -389,24 +388,27 @@ int mul5Sat(int x) {
  *   Rating: 7
  */
 int classifyAdd3(int x, int y, int z) {
-  int sum1 = x + y;
-  int signX = x >> 31;
-  int signY = y >> 31;
-  int signSum1 = sum1 >> 31;
-  int ovf1Pos = ~signX & ~signY & signSum1;
-  int ovf1Neg = signX & signY & ~signSum1;
-  int sum1Sign = (ovf1Pos & 1) | (ovf1Neg & (~0)) | ((~ovf1Pos & ~ovf1Neg) & signSum1);
-  int sum2 = sum1 + z;
-  int signZ = z >> 31;
-  int signSum2 = sum2 >> 31;
-  int sum1SignBit = sum1Sign >> 31;
-  int ovf2Pos = ~sum1SignBit & ~signZ & signSum2;
-  int ovf2Neg = sum1SignBit & signZ & ~signSum2;
-  int posOvf = ovf1Pos | (ovf2Pos & ~ovf1Neg);
-  int negOvf = ovf1Neg | (ovf2Neg & ~ovf1Pos);
-  int result = (posOvf & 1) | negOvf;
-  return result;
-}
+int lo1 = x + y;
+  int carry1 = ((x & y) | ((x | y) & ~lo1)) >> 31 & 1;
+  int hi1 = (x >> 31) + (y >> 31) + carry1;
+
+  int lo2 = lo1 + z;
+  int carry2 = ((lo1 & z) | ((lo1 | z) & ~lo2)) >> 31 & 1;
+  int hi2 = hi1 + (z >> 31) + carry2;
+
+  int lo2_sign = (lo2 >> 31) & 1;
+  int hi2_sign = (hi2 >> 31) & 1;
+  int hi2_zero = !hi2;
+  int hi2_minus1 = !(hi2 ^ ~0);
+
+  int hi2_pos = (!hi2_sign) & (!hi2_zero);
+  int pos_overflow = hi2_pos | (hi2_zero & lo2_sign);
+
+  int hi2_lt_neg1 = hi2_sign & (!hi2_minus1);
+  int neg_overflow = hi2_lt_neg1 | (hi2_minus1 & (!lo2_sign));
+
+  return pos_overflow | (neg_overflow << 31 >> 31);
+  }
 
 // P15
 /*
