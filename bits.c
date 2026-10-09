@@ -158,7 +158,7 @@ int signMask(void) {
  *   Rating: 2
  */
 int bitXor(int x, int y) {
-	return (x | y) & (~(x & y));
+	return ~(~x & ~y) & ~(x & y);
 }
 
 // P3
@@ -306,18 +306,19 @@ int roundEvenPow2(int x, int n) {
  *   Rating: 5
  */
 int midpointTowardFirst(int x, int y) {
-    int xor = x ^ y;
-    int avg = (x & y) + (xor >> 1);
-    int tie = xor & 1;
-    int xSign = x >> 31;
-    int ySign = y >> 31;
-    int diff = x + (~y + 1);
-    int diffSign = diff >> 31;
-    int xGtY = ((xSign ^ ySign) & ~xSign) | (~(xSign ^ ySign) & ~diffSign);
-    int adjust = tie & xGtY;
-      return avg + adjust;
+  int sx = (x >> 31) & 1;
+  int sy = (y >> 31) & 1;
+  int diff = sx ^ sy;
+  int same = !diff;
+  int sub = x + ~y + 1;
+  int sub_sign = (sub >> 31) & 1;
+  int x_ge_y_same = !sub_sign;
+  int x_ge_y_diff = !sx;
+  int x_ge_y = (diff & x_ge_y_diff) | (same & x_ge_y_same);
+  int base = (x & y) + ((x ^ y) >> 1);
+  int is_odd = (x & 1) ^ (y & 1);
+  return base + (is_odd & x_ge_y); 
 }
-
 
 // P12
 /* 
@@ -569,19 +570,20 @@ return sign | (exp << 23) | frac;
  *   Rating: 10
  */
 int bitCount(int x) {
-  int mask1 = 0x55 | (0x55 << 8);
-  mask1 = mask1 | (mask1 << 16); 
-  int mask2 = 0x33 | (0x33 << 8);
-  mask2 = mask2 | (mask2 << 16); 
-  int mask3 = 0x0F | (0x0F << 8);
-  mask3 = mask3 | (mask3 << 16); 
-  int mask4 = 0xFF | (0xFF << 16); 
-  int mask5 = 0xFF | (0xFF << 8);
-int count = (x & mask1) + ((x >> 1) & mask1);
-  count = (count & mask2) + ((count >> 2) & mask2);
-  count = (count & mask3) + ((count >> 4) & mask3);
-  count = (count & mask4) + ((count >> 8) & mask4); 
-  count = (count & mask5) + ((count >> 16) & mask5);
+int m1 = 0x55 | (0x55 << 8);
+  m1 = m1 | (m1 << 16);
+  int m2 = 0x33 | (0x33 << 8);
+  m2 = m2 | (m2 << 16);
+  int m4 = 0x0F | (0x0F << 8);
+  m4 = m4 | (m4 << 16);
+  int m8 = 0xFF | (0xFF << 16);
+  int m16 = 0xFF | (0xFF << 8);
+
+  int count = (x & m1) + ((x >> 1) & m1);
+  count = (count & m2) + ((count >> 2) & m2);
+  count = (count & m4) + ((count >> 4) & m4);
+  count = (count + (count >> 8)) & m8;
+  count = (count + (count >> 16)) & m16;
   return count;
 }
 
